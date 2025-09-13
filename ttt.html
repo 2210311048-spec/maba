@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perkenalan UPNVJ Teknik Mesin 2025</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #008cff;
+            --secondary-color: #5d5dff;
+            --bg-color: #0d1a26;
+            --card-color: rgba(20, 30, 40, 0.6);
+            --text-color: #e0e0e0;
+            --accent-color: #ff8c00;
+            --border-color: rgba(100, 150, 200, 0.2);
+            --shadow-color: rgba(0, 0, 0, 0.4);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            overflow: hidden;
+            transition: background-color 0.5s ease;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Halaman Pembuka */
+        #halaman-pembuka {
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            transition: transform 1s ease-in-out, opacity 1s ease-in-out;
+            opacity: 1;
+        }
+
+        #halaman-pembuka.hidden {
+            opacity: 0;
+            transform: scale(0.8);
+            pointer-events: none;
+            position: absolute;
+        }
+
+        .background-anim {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0f0c29, #3a3f58, #23223f);
+            z-index: -1;
+        }
+
+        .logo-sosmed {
+            display: none;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 1.2rem;
+            font-weight: 300;
+            color: #b0b0b0;
+        }
+
+        #btn-mulai {
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: 2px solid var(--primary-color);
+            background-color: transparent;
+            color: var(--primary-color);
+            border-radius: 50px;
+            margin-top: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #btn-mulai:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
+        }
+
+        /* Halaman Kanvas */
+        #kanvas {
+            position: absolute;
+            width: 100vw;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            transition: transform 1s ease-in-out, opacity 1s ease-in-out;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #kanvas.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .breadcrumb {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 14px;
+            color: #888;
+        }
+
+        .kanvas-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .pulau {
+            position: absolute;
+            width: 250px;
+            height: 150px;
+            background-color: var(--card-color);
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(5px);
+            text-align: center;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow: 0 4px 20px var(--shadow-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .pulau:hover {
+            transform: scale(1.08) translateY(-5px);
+            background-color: rgba(30, 45, 60, 0.8);
+            box-shadow: 0 8px 30px rgba(0, 140, 255, 0.3);
+        }
+
+        .ikon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .pulau h3 {
+            margin: 0 0 5px 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .pulau p {
+            margin: 0;
+            font-size: 0.8rem;
+            color: #b0b0b0;
+        }
+        
+        /* Ikon SVG yang lebih profesional */
+        .ikon-svg {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 10px;
+            fill: var(--primary-color);
+            transition: fill 0.3s ease;
+        }
+
+        .pulau:hover .ikon-svg {
+            fill: var(--accent-color);
+        }
+
+        /* Posisi Relatif dari Setiap Pulau */
+        .pulau-top-center { top: 15%; }
+        .pulau-top-left { top: 15%; left: 10%; }
+        .pulau-top-right { top: 15%; right: 10%; }
+        .pulau-bottom-center { bottom: 15%; }
+        .pulau-bottom-left { bottom: 15%; left: 10%; }
+        .pulau-bottom-right { bottom: 15%; right: 10%; }
+
+        /* Posisi Tata Letak Baru */
+        .pulau-mengenal { top: 20%; left: 20%; }
+        .pulau-termafluida { top: 20%; right: 20%; }
+        .pulau-riset { top: 50%; left: 10%; transform: translateY(-50%); }
+        .pulau-kegiatan { top: 50%; right: 10%; transform: translateY(-50%); }
+        .pulau-karir { bottom: 20%; left: 20%; }
+        .pulau-recruiting { bottom: 20%; right: 20%; }
+
+        .nav-control {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+
+        /* Halaman Konten Popup */
+        .popup-content {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 900px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 0 50px rgba(0, 123, 255, 0.5);
+            z-index: 20;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+            overflow-y: auto;
+            max-height: 80vh;
+        }
+        
+        .popup-content.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .popup-content .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #fff;
+            transition: transform 0.2s ease;
+        }
+
+        .popup-content .close-btn:hover {
+            transform: rotate(90deg);
+        }
+
+        .popup-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .popup-content .content-section {
+            margin-top: 30px;
+        }
+
+        .animasi-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 30px;
+            gap: 20px;
+        }
+
+        .animasi-section h4 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        /* Animasi Aliran Fluida */
+        .animasi-sayap {
+            width: 100%;
+            max-width: 500px;
+            height: 250px;
+            position: relative;
+            background-color: transparent;
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #svg-container {
+            width: 100%;
+            height: 100%;
+        }
+        
+        #airfoil-group {
+            transform-origin: center center;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        #airfoil-path {
+            fill: var(--secondary-color);
+            stroke: var(--primary-color);
+            stroke-width: 2;
+        }
+
+        .streamline {
+            fill: none;
+            stroke: var(--primary-color);
+            stroke-width: 2;
+            stroke-dasharray: 20, 10;
+            animation: aliran 4s linear infinite;
+        }
+
+        .streamline:nth-child(2) { animation-delay: 0.2s; }
+        .streamline:nth-child(3) { animation-delay: 0.4s; }
+        .streamline:nth-child(4) { animation-delay: 0.6s; }
+        .streamline:nth-child(5) { animation-delay: 0.8s; }
+        .streamline:nth-child(6) { animation-delay: 1.0s; }
+        .streamline:nth-child(7) { animation-delay: 1.2s; }
+
+        @keyframes aliran {
+            0% { stroke-dashoffset: 0; }
+            100% { stroke-dashoffset: -30; }
+        }
+
+        /* Animasi Aliran dalam Pipa */
+        .animasi-pipa {
+            width: 100%;
+            max-width: 400px;
+            height: 150px;
+            position: relative;
+            background-color: transparent;
+        }
+
+        .pipa-atas, .pipa-bawah {
+            position: absolute;
+            width: 100%;
+            height: 20px;
+            background-color: #5d5dff;
+            border-radius: 10px;
+        }
+        .pipa-atas { top: 0; }
+        .pipa-bawah { bottom: 0; }
+
+        .fluida-pipa {
+            position: absolute;
+            width: 50px;
+            height: 10px;
+            background-color: #007bff;
+            top: 50%;
+            left: -50px;
+            transform: translateY(-50%);
+            border-radius: 5px;
+            animation: aliranPipa 3s linear infinite;
+        }
+
+        .fluida-pipa:nth-child(2) { animation-delay: 1s; }
+        .fluida-pipa:nth-child(3) { animation-delay: 2s; }
+
+        @keyframes aliranPipa {
+            0% { left: -50px; }
+            100% { left: 100%; }
+        }
+
+        /* Gaya untuk Anggota Tim */
+        .anggota-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .anggota-card {
+            display: flex;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .anggota-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .anggota-card img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary-color);
+            margin-right: 20px;
+        }
+        .anggota-info {
+            text-align: left;
+        }
+
+        .anggota-info h3 {
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        .anggota-info p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #b0b0b0;
+        }
+
+        /* Gaya Khusus untuk Pop-up Recruiting */
+        .recruiting-message {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .recruiting-message .icon-x {
+            font-size: 10rem;
+            color: #ff0000;
+            display: block;
+            margin-bottom: 20px;
+            line-height: 1;
+        }
+        .recruiting-message p {
+            font-size: 1.5rem;
+            color: #ffaaaa;
+        }
+        
+        .lokasi-section a {
+            color: var(--primary-color);
+            text-decoration: underline;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Halaman Pembuka -->
+    <section id="halaman-pembuka" class="active">
+        <div class="background-anim"></div>
+        <div class="content">
+            <div class="logo-sosmed">
+                <a href="#">▶️ UPNVJ</a>
+                <a href="#">🐦 UPNVJ</a>
+                <a href="#">📸 Teknik Mesin</a>
+            </div>
+            <h1>Selamat Datang, Insinyur Masa Depan UPNVJ 2025!</h1>
+            <p>Jelajahi Dunia Termal & Fluida bersama Applied Thermal and Fluid Laboratory (ATFL)</p>
+            <button id="btn-mulai">Mulai Petualangan!</button>
+        </div>
+    </section>
+
+    <!-- Halaman Kanvas Interaktif -->
+    <section id="kanvas" class="hidden">
+        <div class="breadcrumb">HOME > Peta Interaktif</div>
+        <div class="kanvas-container">
+            <div class="pulau pulau-mengenal" data-target="pulau2">
+                <svg class="ikon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.35 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3c3.08 0 5.5 2.42 5.5 5.5c0 3.78-3.4 6.85-8.55 11.54L12 21.35z"/>
+                </svg>
+                <h3>Mengenal ATFL Lebih Dekat</h3>
+                <p>Inovasi & Riset Fisika</p>
+            </div>
+            <div class="pulau pulau-termafluida" data-target="pulau1">
+                <svg class="ikon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2zM12 4c2.61 0 5.09 1.13 6.64 3.06L7.06 18.64A8.006 8.006 0 014 12c0-2.61 1.13-5.09 3.06-6.64L12 4z"/>
+                </svg>
+                <h3>Apa Itu Termal & Fluida?</h3>
+                <p>Pusat Ilmu Dasar</p>
+            </div>
+            <div class="pulau pulau-riset" data-target="pulau3">
+                <svg class="ikon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 13 13 15 12 19"/>
+                </svg>
+                <h3>Bidang Riset Utama</h3>
+                <p>Fokus Penelitian Kami</p>
+            </div>
+            <div class="pulau pulau-kegiatan" data-target="pulau4">
+                <svg class="ikon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                <h3>Kegiatan & Anggota</h3>
+                <p>Kolaborasi & Pembelajaran</p>
+            </div>
+            <div class="pulau pulau-karir" data-target="pulau5">
+                <svg class="ikon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                </svg>
+                <h3>Jejak Karir & Masa Depan</h3>
+                <p>Karier Sukses di Depanmu</p>
+            </div>
+            <div class="pulau pulau-recruiting" data-target="pulau-recruiting">
+                <svg class="ikon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+                <h3>Recruiting</h3>
+                <p>Info Rekrutmen Anggota Baru</p>
+            </div>
+        </div>
+        <div class="nav-control">
+            <span>🔊</span>
+        </div>
+    </section>
+
+    <!-- Konten Pop-up untuk Pulau 1 -->
+    <div id="pulau-content-1" class="popup-content hidden">
+        <span class="close-btn" id="close-btn-1">&times;</span>
+        <h2>Apa Itu Termal & Fluida?</h2>
+        <div class="content-section">
+            <p>Seringkali kita hanya membagi materi menjadi tiga: padat, cair, dan gas. Tapi dalam ilmu mekanika fluida, kita menyatukan dua yang terakhir, yaitu zat cair dan gas, menjadi satu kategori: <strong>fluida</strong>. Intinya, fluida adalah zat yang bisa mengalir ketika didorong atau diberi tekanan, tidak seperti benda padat yang mempertahankan bentuknya.</p>
+        </div>
+        <hr style="border-color: #3a3f58; margin: 30px 0;">
+        <div class="content-section">
+            <p>Saat mempelajari fluida, kita tidak fokus pada gerakan setiap molekulnya yang sangat rumit dan acak. Sebaliknya, kita menggunakan pendekatan yang lebih sederhana, yaitu <strong>hipotesis kontinuum</strong>. Dengan asumsi ini, kita memperlakukan fluida sebagai objek yang terus-menerus dan tak terpisahkan. Jadi, alih-alih melacak $10^{23}$ atom, kita cukup menggambarkan fluida dengan dua variabel utama yang sederhana dan lancar:</p>
+            <ul>
+                <li><strong>Kepadatan ($\rho(x,t)$)</strong>: Seberapa padat fluida di suatu titik dan waktu.</li>
+                <li><strong>Kecepatan ($u(x,t)$)</strong>: Kecepatan rata-rata fluida di suatu titik dan waktu.</li>
+            </ul>
+        </div>
+        <hr style="border-color: #3a3f58; margin: 30px 0;">
+        <div class="content-section">
+            <h3>Animasi Interaktif: Aliran Fluida</h3>
+            <p>Mari kita lihat bagaimana fluida mengalir di sekitar sayap pesawat.</p>
+            <div class="animasi-section">
+                <h4>Animasi Gaya Angkat pada Sayap Pesawat</h4>
+                <p>Gerakkan penggeser di bawah ini untuk mengubah Sudut Serang (AoA) dan lihat bagaimana garis aliran (streamline) berubah.</p>
+                <div class="animasi-sayap">
+                    <svg id="svg-container" viewBox="0 0 500 250" preserveAspectRatio="xMidYMid meet">
+                        <!-- Streamline Paths (Dinamis) -->
+                        <path id="streamline-1" class="streamline"></path>
+                        <path id="streamline-2" class="streamline"></path>
+                        <path id="streamline-3" class="streamline"></path>
+                        <path id="streamline-4" class="streamline"></path>
+                        <path id="streamline-5" class="streamline"></path>
+                        <path id="streamline-6" class="streamline"></path>
+                        <path id="streamline-7" class="streamline"></path>
+                        
+                        <!-- Airfoil NACA 0015 Group (Bisa diputar) -->
+                        <g id="airfoil-group">
+                            <path id="airfoil-path" transform="rotate(0 250 125)" d="M 50 125 C 100 135, 200 135, 250 125 S 400 115, 450 125 L 50 125 Z"></path>
+                        </g>
+                    </svg>
+                </div>
+                <div class="aoa-control">
+                    <input type="range" id="aoa-slider" min="-15" max="15" value="0">
+                    <p>Sudut Serang (AoA): <span id="aoa-value">0</span>&deg;</p>
+                </div>
+            </div>
+            <div class="animasi-section">
+                <h4>Animasi Aliran di Dalam Pipa</h4>
+                <p>Sama pentingnya, aliran fluida juga terjadi di dalam ruang tertutup seperti pipa. Ini diterapkan pada sistem perpipaan di rumah atau bahkan aliran darah di dalam pembuluh.</p>
+                <div class="animasi-pipa">
+                    <div class="pipa-atas"></div>
+                    <div class="pipa-bawah"></div>
+                    <div class="fluida-pipa"></div>
+                    <div class="fluida-pipa"></div>
+                    <div class="fluida-pipa"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Konten Pop-up untuk Pulau 2: Mengenal ATFL Lebih Dekat -->
+    <div id="pulau-content-2" class="popup-content hidden">
+        <span class="close-btn" id="close-btn-2">&times;</span>
+        <h2>Mengenal ATFL Lebih Dekat</h2>
+        <div class="content-section">
+            <p><strong>Applied Thermal and Fluid Laboratory (ATFL)</strong> adalah pusat di mana teori termal dan fluida diterapkan untuk memecahkan masalah praktis. Kami berfokus pada riset inovatif dan kolaborasi antara dosen serta mahasiswa.</p>
+        </div>
+        <hr style="border-color: #3a3f58; margin: 30px 0;">
+        <div class="content-section lokasi-section">
+            <h4>Lokasi ATFL</h4>
+            <p>Kunjungi kami untuk melihat langsung fasilitas lab dan berdiskusi. Lokasi kami berada di:</p>
+            <a href="https://www.google.com/maps/place/Base+Engineering+Indonesia/@-6.3356275,106.7865586,17z/data=!3m1!4b1!4m6!3m5!1s0x2e69ef1969f1a4f1:0x910ab4eb3373a5a2!8m2!3d-6.3356328!4d106.7891389!16s%2Fg%2F11svm7z5wx?entry=ttu&g_ep=EgoyMDI1MDkxMC4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener noreferrer">Base Engineering Indonesia</a>
+        </div>
+    </div>
+
+    <!-- Konten Pop-up untuk Pulau 3, 4, 5 (Opsional) -->
+    <div id="pulau-content-3" class="popup-content hidden">
+        <span class="close-btn" id="close-btn-3">&times;</span>
+        <h2>Bidang Riset Utama</h2>
+        <div class="content-section">
+            <p>Dalam bidang riset kami, **Computational Fluid Dynamics (CFD)** adalah alat utama yang digunakan untuk mensimulasikan dan menganalisis berbagai fenomena fluida dan termal.</p>
+            <ul>
+                <li><strong>Aliran Fluida Terhadap Satu Objek:</strong> Menggunakan CFD untuk mensimulasikan aliran udara atau air di sekitar objek (seperti sayap pesawat atau bodi mobil). Penelitian ini bertujuan untuk mengoptimalkan gaya angkat, mengurangi hambatan, dan meningkatkan efisiensi aerodinamika atau hidrodinamika.</li>
+                <li><strong>Perpindahan Panas pada Topik Terbarukan:</strong> Menerapkan CFD untuk menganalisis bagaimana panas berpindah dalam sistem energi terbarukan. Misalnya, simulasi penyerapan panas di kolektor surya atau optimalisasi transfer panas pada sistem panas bumi.</li>
+            </ul>
+        </div>
+    </div>
+    <div id="pulau-content-4" class="popup-content hidden">
+        <span class="close-btn" id="close-btn-4">&times;</span>
+        <h2>Kegiatan & Anggota</h2>
+        <p>Konten untuk Kegiatan & Anggota akan ditampilkan di sini.</p>
+        <hr style="border-color: #3a3f58; margin: 30px 0;">
+        <div class="content-section">
+            <h4>Anggota Tim</h4>
+            <div class="anggota-container">
+                <!-- Ketua -->
+                <div class="anggota-card">
+                    <img src="https://placehold.co/100x100/3a3f58/e0e0e0?text=Dr.+James" alt="Foto Dr. James Julian">
+                    <div class="anggota-info">
+                        <h3>Dr. James Julian, S.T., M.T.</h3>
+                        <p>Ketua</p>
+                    </div>
+                </div>
+                <!-- Manager -->
+                <div class="anggota-card">
+                    <img src="https://placehold.co/100x100/3a3f58/e0e0e0?text=Rizki" alt="Foto Rizki Aldi Anggara">
+                    <div class="anggota-info">
+                        <h3>Rizki Aldi Anggara, S.T.</h3>
+                        <p>Manager</p>
+                    </div>
+                </div>
+                <!-- Angkatan 2022 -->
+                <div class="anggota-card">
+                    <img src="https://placehold.co/100x100/3a3f58/e0e0e0?text=Bima" alt="Foto Bima Rakha">
+                    <div class="anggota-info">
+                        <h3>Bima Rakha Adhitama</h3>
+                        <p>Anggota (2210311048)</p>
+                    </div>
+                </div>
+                <div class="anggota-card">
+                    <img src="https://placehold.co/100x100/3a3f58/e0e0e0?text=Anggie" alt="Foto Anggie Topan">
+                    <div class="anggota-info">
+                        <h3>Anggie Topan Wijaya</h3>
+                        <p>Anggota (2210311034)</p>
+                    </div>
+                </div>
+                <div class="anggota-card">
+                    <img src="https://placehold.co/100x100/3a3f58/e0e0e0?text=Rasya" alt="Foto Rasya Aulia">
+                    <div class="anggota-info">
+                        <h3>Rasya Aulia Nathania Nisa</h3>
+                        <p>Anggota (2210311041)</p>
+                    </div>
+                </div>
+                <!-- Angkatan 2023 -->
+                <div class="anggota-card">
+                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAaVBMVEXg4OA/Pz/8/PzMzMzT09Pz8/P6+vrR0dHk5OTs7OxBQUHn5+eQkJCjo6PZ2dnh4eHg4OCWlpa3t7fOzs7FxcVOTk6IiIimpqaQkJCnp6fExMTt7e2NjY27u7vk5OTY2NiwXyYJAAAEZklEQVR4nO2d6XKbMAxFQyAABM3d978a3vQyQWtrrW2yB2S+3P5QjHw9lUqpE5z1cufz+f5r6hGk9rL23D+oYh/s35TqVvj+95n732K5d1Jc7H+b+0+kPIf923H9LgC9B355j8FvgeGv4H4n+3+6L0D8B383h/vK+g0n/z2P/s2H43H8S2d3h7gV5b7T+V6hK+f2385b+iP+P//cR/z/G9T0+vA//+b99f2xH87u2E/t6O5+z75f7gN/H253h6M5+5+7H8A4a4F/743/e8X4vXF8A5b7n4H8K+35e/j+8fA3D+3/n3d/314G8P1/Yx9G8D2X9j8Qv//+B8O+h1m/h+358G9b8f/n8j+T8v/t+u3/9H819F/z4b4X+3+n953x8T+V/h/k3j/tD2h3h/y/f/574e4X+1uR/h+G54P9w7bH6+tX/rL66+n4C7b1l9P707L/15Vf4E+69l/45137J9qP+P+P+8eP9c7r9s/d77f7j/sT/V/+V7f1q1u0f3X4Lh8P7g2H+f+8v12x+d318e9/0/f8z/9uP86+4/y37q/w8+n/sB9n8r/i/N+5X91P9T2//d9V/5P9p+v/8d77f7N7p+H//35t9d/1s0fzf/t9X/b6f/B9g/G/9r67+J/8/mXwX8m7/3G/m2r+3dov7h/3f7t+bdf/j/T2s/13v//jO+61v//W8/3F+C+f/jT//f9m/C/6/6B/s/x3//B/W/9d4f6d3D+R/hvv/87h2o/t3f/19t/v/y+T/f9x//fG/q3z/99/3fD3d9x/0/j/t/d/f+7v7/u76/0/vL/T++O83+X+381/s3m3/9d93/d3//qX9j6r/j/p/c79N+v+P+3+z/2m027/9+7/yP95+L+3+f/t9/+T+38+v+z/9+b+s36/8b9T/3f4b4X/3fF/2/j/n/n/i+H/r//f/d87f7d43++d+3/+fD/e1x/3fD628P9e3H/1/R/+G+H7/eH+7fP/b/h+j+7n3/N/O/H/l/G/f/b/u/x/6/3/x+z/9+b/a/2H/h/3/f/fP9u2/8f2f/j/2m8P9d/s3f/1+z/8N+v/6//3z2W/37M/2b/43i/L9z/7+7f/j/z/j/3d7f+X8v/P+X/d+3/3n7/J/X/2H7/D+p+B/R8P97XD+G+V/G/v//c9r+X/j//d8//d+H8D9D+e/d/b/2H9/L9b/f+3+7/b/b/3H7/V/g+t/P/f+L8P+z8x+0/v/L+/+V+y/1f2H7/D+b9H+D8v/f/f+v+n+3f9+p/n/H+H+P/n/j/n/h//n//B4b/b/f/2/m/1f0n/h/1/g/n/j/L//+b/W/h//n+d3f/5/9n2/j/W/1/t/z/k/h//fN//9R3/87d/9P/h/L/3+7/b/f/n/f/z+n/h/h/7/j/n/j/n/j/n/j//j7/+E/n/v/r/z/v/b/r/n/n/n/n/z/k/n/v/r//+f/d//8R/n/f/3/n/v/r//j723+/9e/d9u+z/b/L/v//f/d/v/f+/839f+f+7/2/f/+/+H93/d9n/j/L/f//+P/d/t/3P//+O8O/N/j/v//j/3/7/r/f/r/n/v//j/v/7//r/f/n/v//j//+O8f/L/X/3/n/v/3/n//j/f/H+L//+P//+P/+P/H+L/H+L/+P/H/H+P/H/H+P/H+H+L//j///+v/P+v/P+H+P/H+H+H+H/H+H+L//P//9R29Qv4AAAAASUVORK5CYII=" alt="Foto Irsyada Ahmad">
+                    <div class="anggota-info">
+                        <h3>Irsyada Ahmad Althaf Farih</h3>
+                        <p>Anggota (2310311006)</p>
+                    </div>
+                </div>
+                <div class="anggota-card">
+                    <img src="https://placehold.co/100x100/3a3f58/e0e0e0?text=Nabeel" alt="Foto Nabeel Pasha">
+                    <div class="anggota-info">
+                        <h3>Nabeel Pasha</h3>
+                        <p>Anggota (2310311003)</p>
+                    </div>
+                </div>
+                <div class="anggota-card">
+                    <img src="https://placehold.co/100x100/3a3f58/e0e0e0?text=Raden" alt="Foto Raden Aulia Gibran">
+                    <div class="anggota-info">
+                        <h3>Raden Aulia Gibran</h3>
+                        <p>Anggota (2310311021)</p>
+                    </div>
+                </div>
+                <div class="anggota-card">
+                    <img src="https://placehold.co/100x100/3a3f58/e0e0e0?text=Rendy" alt="Foto Rendy">
+                    <div class="anggota-info">
+                        <h3>Rendy</h3>
+                        <p>Anggota (2310311028)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="pulau-content-5" class="popup-content hidden">
+        <span class="close-btn" id="close-btn-5">&times;</span>
+        <h2>Jejak Karir & Masa Depan</h2>
+        <div class="content-section">
+            <p>Lulusan yang memiliki pemahaman kuat di bidang ini sangat dicari di berbagai sektor industri. Prospek karir tidak terbatas pada satu bidang saja, melainkan sangat luas dan bervariasi.</p>
+            <ul>
+                <li><strong>Industri Otomotif dan Transportasi:</strong> Mengembangkan mesin yang lebih efisien, sistem pendingin untuk kendaraan listrik, atau merancang aerodinamika mobil balap.</li>
+                <li><strong>Industri Penerbangan:</strong> Merancang bentuk sayap pesawat yang optimal, sistem pendingin mesin jet, atau menganalisis aliran udara di sekitar pesawat.</li>
+                <li><strong>Sektor Energi:</strong> Merancang sistem pembangkit listrik (tenaga panas bumi, mikrohidro, atau tenaga nuklir), mengoptimalkan transfer panas, dan sistem pendingin untuk reaktor.</li>
+                <li><strong>Manufaktur dan HVAC (Heating, Ventilation, and Air Conditioning):</strong> Mengembangkan sistem pendingin dan pemanas untuk bangunan, merancang peralatan transfer panas, atau mengelola sistem pendingin di pabrik.</li>
+            </ul>
+        </div>
+        <hr style="border-color: #3a3f58; margin: 30px 0;">
+        <div class="content-section">
+            <h4>Keterampilan yang Dikuasai</h4>
+            <p>ATFL tidak hanya memberikan pengetahuan teoritis, tetapi juga keterampilan praktis yang sangat berharga di dunia kerja.</p>
+            <ul>
+                <li><strong>Analisis Data dan Simulasi:</strong> Kemampuan untuk menggunakan perangkat lunak simulasi seperti ANSYS atau SolidWorks untuk memprediksi perilaku fluida dan termal.</li>
+                <li><strong>Riset dan Pengembangan:</strong> Keterampilan dalam merencanakan, melaksanakan, dan melaporkan proyek penelitian yang inovatif.</li>
+                <li><strong>Pemecahan Masalah (Problem-Solving):</strong> Kemampuan untuk mengidentifikasi masalah, menganalisisnya, dan menemukan solusi yang efisien, baik secara teoritis maupun eksperimental.</li>
+                <li><strong>Kerja Tim:</strong> Pengalaman berkolaborasi dalam proyek-proyek riset yang melibatkan dosen dan mahasiswa.</li>
+            </ul>
+            <p>Dengan bekal ini, kalian tidak hanya siap menghadapi tantangan teknis, tetapi juga menjadi pemimpin dan inovator di masa depan.</p>
+        </div>
+    </div>
+
+    <!-- Konten Pop-up untuk Pulau Recruiting -->
+    <div id="pulau-content-recruiting" class="popup-content hidden">
+        <span class="close-btn" id="close-btn-recruiting">&times;</span>
+        <h2>Recruiting ATFL</h2>
+        <div class="recruiting-message">
+            <span class="icon-x">&times;</span>
+            <p>ATFL saat ini tidak membuka rekrutmen anggota baru. Informasi akan disampaikan jika ada kesempatan di masa depan.</p>
+        </div>
+    </div>
+    
+    <script>
+        // Script JavaScript untuk interaktivitas
+        const btnMulai = document.getElementById('btn-mulai');
+        const halamanPembuka = document.getElementById('halaman-pembuka');
+        const kanvas = document.getElementById('kanvas');
+        
+        const popupContents = {
+            pulau1: { element: document.getElementById('pulau-content-1'), closeBtn: document.getElementById('close-btn-1') },
+            pulau2: { element: document.getElementById('pulau-content-2'), closeBtn: document.getElementById('close-btn-2') },
+            pulau3: { element: document.getElementById('pulau-content-3'), closeBtn: document.getElementById('close-btn-3') },
+            pulau4: { element: document.getElementById('pulau-content-4'), closeBtn: document.getElementById('close-btn-4') },
+            pulau5: { element: document.getElementById('pulau-content-5'), closeBtn: document.getElementById('close-btn-5') },
+            "pulau-recruiting": { element: document.getElementById('pulau-content-recruiting'), closeBtn: document.getElementById('close-btn-recruiting') }
+        };
+
+        // Elemen untuk animasi AoA
+        const aoaSlider = document.getElementById('aoa-slider');
+        const aoaValue = document.getElementById('aoa-value');
+        const airfoilPath = document.getElementById('airfoil-path');
+        const streamlines = document.querySelectorAll('.streamline');
+
+        btnMulai.addEventListener('click', () => {
+            halamanPembuka.classList.remove('active');
+            halamanPembuka.classList.add('hidden');
+            kanvas.classList.remove('hidden');
+            kanvas.classList.add('active');
+        });
+
+        document.querySelectorAll('.pulau').forEach(pulau => {
+            pulau.addEventListener('click', () => {
+                const target = pulau.getAttribute('data-target');
+                // Menyembunyikan semua pop-up terlebih dahulu
+                for (const key in popupContents) {
+                    popupContents[key].element.classList.remove('active');
+                }
+
+                if (popupContents[target]) {
+                    kanvas.classList.remove('active');
+                    popupContents[target].element.classList.add('active');
+                    if (target === 'pulau1') {
+                        updateAirfoil();
+                    }
+                } else {
+                    alert(`Anda mengklik: ${pulau.querySelector('h3').textContent}. Konten belum tersedia.`);
+                }
+            });
+        });
+
+        // Menambahkan event listener untuk semua tombol tutup
+        for (const key in popupContents) {
+            if (popupContents[key].closeBtn) {
+                popupContents[key].closeBtn.addEventListener('click', () => {
+                    popupContents[key].element.classList.remove('active');
+                    kanvas.classList.add('active');
+                });
+            }
+        }
+
+        // Fungsi untuk mengupdate streamline berdasarkan AoA
+        function updateAirfoil() {
+            const angle = parseFloat(aoaSlider.value);
+            aoaValue.textContent = angle;
+            
+            // Rotasi airfoil saja
+            airfoilPath.setAttribute('transform', `rotate(${angle} 250 125)`);
+
+            // Definisi streamline
+            const baseLines = [
+                { y: 50, offsetFactor: 0.1 },
+                { y: 75, offsetFactor: 0.5 },
+                { y: 100, offsetFactor: 0.9 },
+                { y: 125, offsetFactor: 1.0 }, // Streamline tengah
+                { y: 150, offsetFactor: 0.9 },
+                { y: 175, offsetFactor: 0.5 },
+                { y: 200, offsetFactor: 0.1 }
+            ];
+
+            streamlines.forEach((line, index) => {
+                const base = baseLines[index];
+                
+                // Menghitung offset y berdasarkan sudut dan faktor
+                const yOffset = angle * base.offsetFactor;
+
+                // Koordinat titik kontrol untuk kurva
+                const controlPoint1Y = base.y - yOffset;
+                const controlPoint2Y = base.y - yOffset;
+
+                // Membuat path string untuk Cubic Bezier curve
+                const d = `M 0 ${base.y} C 125 ${controlPoint1Y}, 375 ${controlPoint2Y}, 500 ${base.y}`;
+                line.setAttribute('d', d);
+            });
+        }
+        
+        // Event listener untuk penggeser AoA
+        aoaSlider.addEventListener('input', updateAirfoil);
+
+        // Panggil fungsi saat halaman pertama kali dimuat
+        window.addEventListener('load', updateAirfoil);
+    </script>
+</body>
+</html>
